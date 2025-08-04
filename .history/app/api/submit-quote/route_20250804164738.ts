@@ -5,36 +5,17 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(request: NextRequest) {
   try {
-    const data = await request.json();
-    const { userInfo, carInfo, timestamp, lastActivity, currentStep } = data;
+    const body = await request.json();
+    const { carInfo, userInfo, documents, selectedOffer } = body;
 
-    const timeSpent = lastActivity
-      ? Math.round((lastActivity - timestamp) / 1000 / 60)
-      : 0;
-    const abandonedAt = new Date(lastActivity || timestamp).toLocaleString(
-      "en-US",
-      {
-        timeZone: "Africa/Cairo",
-        dateStyle: "medium",
-        timeStyle: "short",
-      }
-    );
-
-    const stepNames: Record<string, string> = {
-      "car-info": "Vehicle Information",
-      "user-info": "Personal Information",
-      documents: "Document Upload",
-      offers: "Insurance Offers",
-      "thank-you": "Completion",
-    };
-
+    // Create email content
     const emailHtml = `
       <!DOCTYPE html>
       <html lang="en">
       <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>🚨 URGENT: Abandoned Insurance Quote</title>
+        <title>✅ New Insurance Quote Submitted</title>
         <style>
           body { 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
@@ -52,7 +33,7 @@ export async function POST(request: NextRequest) {
             box-shadow: 0 4px 20px rgba(0,0,0,0.1);
           }
           .header { 
-            background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%); 
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%); 
             color: white; 
             padding: 30px 20px; 
             text-align: center;
@@ -62,9 +43,9 @@ export async function POST(request: NextRequest) {
             font-size: 24px;
             font-weight: 700;
           }
-          .urgent-badge {
-            background: #fbbf24;
-            color: #92400e;
+          .success-badge {
+            background: #34d399;
+            color: #065f46;
             padding: 8px 16px;
             border-radius: 20px;
             font-size: 12px;
@@ -75,9 +56,9 @@ export async function POST(request: NextRequest) {
           .content { 
             padding: 30px;
           }
-          .alert-box {
-            background: #fef2f2;
-            border-left: 4px solid #dc2626;
+          .success-box {
+            background: #f0fdf4;
+            border-left: 4px solid #10b981;
             padding: 20px;
             margin: 20px 0;
             border-radius: 0 8px 8px 0;
@@ -116,39 +97,50 @@ export async function POST(request: NextRequest) {
             color: #111827;
             font-weight: 500;
           }
-          .progress-section {
-            background: #f0f9ff;
-            border: 1px solid #0ea5e9;
-            border-radius: 10px;
-            padding: 20px;
-            margin: 25px 0;
-          }
-          .progress-bar {
-            background: #e0e7ff;
-            height: 8px;
-            border-radius: 4px;
-            overflow: hidden;
-            margin: 10px 0;
-          }
-          .progress-fill {
-            background: linear-gradient(90deg, #3b82f6, #1d4ed8);
-            height: 100%;
-            transition: width 0.3s ease;
-          }
-          .action-section {
-            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+          .premium-section {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
             color: white;
             padding: 25px;
             border-radius: 10px;
             text-align: center;
             margin: 25px 0;
           }
-          .contact-priority {
+          .premium-section h2 {
+            margin: 0 0 10px 0;
+            font-size: 24px;
+          }
+          .premium-section .amount {
+            font-size: 28px;
+            font-weight: bold;
+            margin: 10px 0;
+          }
+          .conditions-section {
             background: #fef3c7;
-            border: 2px solid #f59e0b;
+            border: 1px solid #f59e0b;
             border-radius: 10px;
             padding: 20px;
             margin: 20px 0;
+          }
+          .conditions-section h4 {
+            color: #92400e;
+            margin: 0 0 15px 0;
+          }
+          .conditions-section ul {
+            margin: 0;
+            padding-right: 20px;
+            text-align: right;
+            direction: rtl;
+          }
+          .conditions-section li {
+            margin: 8px 0;
+            color: #92400e;
+          }
+          .action-section {
+            background: #eff6ff;
+            border: 1px solid #3b82f6;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 25px 0;
           }
           .footer {
             background: #f9fafb;
@@ -168,14 +160,14 @@ export async function POST(request: NextRequest) {
       <body>
         <div class="container">
           <div class="header">
-            <h1>🚨 ABANDONED INSURANCE QUOTE</h1>
-            <div class="urgent-badge">HIGH PRIORITY - CONTACT IMMEDIATELY</div>
+            <h1>✅ NEW INSURANCE QUOTE SUBMITTED</h1>
+            <div class="success-badge">QUOTE READY FOR PROCESSING</div>
           </div>
           
           <div class="content">
-            <div class="alert-box">
-              <h3 style="margin: 0 0 10px 0; color: #dc2626;">⚠️ Customer Alert</h3>
-              <p style="margin: 0; font-weight: 500;">A potential customer started the insurance quote process but abandoned it. <strong>Immediate follow-up required!</strong></p>
+            <div class="success-box">
+              <h3 style="margin: 0 0 10px 0; color: #059669;">🎉 Quote Submission Successful</h3>
+              <p style="margin: 0; font-weight: 500;">A customer has successfully completed and submitted their insurance quote. <strong>Ready for policy processing!</strong></p>
             </div>
 
             <div class="info-grid">
@@ -189,16 +181,14 @@ export async function POST(request: NextRequest) {
                   <span class="info-label">Phone:</span>
                   <span class="info-value">${userInfo.mobile_number}</span>
                 </div>
-                ${
-                  userInfo.email
-                    ? `
                 <div class="info-item">
                   <span class="info-label">Email:</span>
-                  <span class="info-value">${userInfo.email}</span>
+                  <span class="info-value">${userInfo.email || "Not provided"}</span>
                 </div>
-                `
-                    : ""
-                }
+                <div class="info-item">
+                  <span class="info-label">Submitted:</span>
+                  <span class="info-value">${new Date().toLocaleString('en-US', { timeZone: 'Africa/Cairo' })} (Cairo)</span>
+                </div>
               </div>
               
               <div class="info-card">
@@ -217,7 +207,7 @@ export async function POST(request: NextRequest) {
                 </div>
                 <div class="info-item">
                   <span class="info-label">Value:</span>
-                  <span class="info-value">${carInfo.market_price?.toLocaleString()} EGP</span>
+                  <span class="info-value">${carInfo.market_price.toLocaleString()} EGP</span>
                 </div>
                 <div class="info-item">
                   <span class="info-label">Condition:</span>
@@ -230,60 +220,74 @@ export async function POST(request: NextRequest) {
               </div>
             </div>
 
-            <div class="progress-section">
-              <h3 style="margin: 0 0 15px 0; color: #0369a1;">📊 Quote Progress</h3>
-              <div class="info-item">
-                <span class="info-label">Last Step Completed:</span>
-                <span class="info-value">${stepNames[currentStep] || currentStep}</span>
-              </div>
-              <div class="info-item">
-                <span class="info-label">Time Spent:</span>
-                <span class="info-value">${timeSpent} minutes</span>
-              </div>
-              <div class="info-item">
-                <span class="info-label">Abandoned At:</span>
-                <span class="info-value">${abandonedAt} (Cairo Time)</span>
-              </div>
+            <div class="premium-section">
+              <h2>🏆 Selected Insurance Plan</h2>
+              <div style="font-size: 20px; margin: 10px 0;">${selectedOffer.company}</div>
+              <div style="font-size: 16px; opacity: 0.9; margin: 5px 0;">${selectedOffer.policyType}</div>
+              <div class="amount">${Math.round(selectedOffer.annualPremium).toLocaleString()} EGP</div>
+              <div style="font-size: 14px; opacity: 0.9;">Annual Premium • Rate: ${(selectedOffer.premiumRate * 100).toFixed(2)}%</div>
             </div>
-
-            <div class="contact-priority">
-              <h3 style="margin: 0 0 10px 0; color: #92400e;">📞 Contact Priority</h3>
-              <p style="margin: 0; color: #92400e; font-weight: 500;">This customer showed high interest by providing personal details and vehicle information. <strong>Contact within 1 hour for best conversion rate.</strong></p>
+              
+            <div class="conditions-section">
+              <h4>📋 Policy Terms and Conditions</h4>
+              <ul>
+                ${selectedOffer.conditions?.ar ? selectedOffer.conditions.ar.map((condition: string) => `<li>${condition}</li>`).join("") : '<li>شروط وأحكام الوثيقة سيتم توضيحها عند إصدار الوثيقة</li>'}
+              </ul>
             </div>
 
             <div class="action-section">
-              <h3 style="margin: 0 0 15px 0;">🎯 Recommended Actions</h3>
-              <ul style="text-align: left; margin: 0; padding-left: 20px;">
-                <li>Call the customer immediately using the provided phone number</li>
-                <li>Reference their specific vehicle: ${carInfo.year} ${carInfo.make} ${carInfo.model}</li>
-                <li>Mention the estimated value: ${carInfo.market_price?.toLocaleString()} EGP</li>
-                <li>Offer to complete the quote process over the phone</li>
-                <li>Provide immediate pricing if possible</li>
+              <h3 style="margin: 0 0 15px 0; color: #1d4ed8;">📞 Next Steps</h3>
+              <ul style="margin: 0; padding-left: 20px; color: #1e40af;">
+                <li>Contact customer within 24 hours to confirm details</li>
+                <li>Verify submitted documents and information</li>
+                <li>Process policy issuance and payment collection</li>
+                <li>Send policy documents to customer</li>
               </ul>
             </div>
           </div>
           
           <div class="footer">
-            <p>SKY Insurance - Customer Acquisition System</p>
-            <p>Generated on ${new Date().toLocaleString("en-US", { timeZone: "Africa/Cairo" })} (Cairo Time)</p>
+            <p>SKY Insurance - Policy Management System</p>
+            <p>Generated on ${new Date().toLocaleString('en-US', { timeZone: 'Africa/Cairo' })} (Cairo Time)</p>
           </div>
         </div>
       </body>
       </html>
     `;
 
-    await resend.emails.send({
-      from: "SKY Insurance <noreply@resend.dev>",
-      to: ["website@sky.eg"],
-      subject: `🚨 URGENT ABANDONED QUOTE: ${userInfo.full_name} - ${carInfo.year} ${carInfo.make} ${carInfo.model} (${carInfo.market_price?.toLocaleString()} EGP)`,
-      html: emailHtml,
+    // Send email
+    try {
+      await resend.emails.send({
+        from: "SKY Insurance <noreply@resend.dev>",
+        to: ["omar.khaled@sky.eg"],
+        subject: `✅ NEW QUOTE SUBMITTED: ${userInfo.full_name} - ${carInfo.year} ${carInfo.make} ${carInfo.model} (${Math.round(selectedOffer.annualPremium).toLocaleString()} EGP)`,
+        html: emailHtml,
+      });
+    } catch (emailError) {
+      console.error("Email sending failed:", emailError);
+      return NextResponse.json(
+        { success: false, error: "فشل في إرسال البريد الإلكتروني" },
+        { status: 500 }
+      );
+    }
+
+    console.log("Quote submission:", {
+      carInfo,
+      userInfo,
+      documents,
+      selectedOffer,
+      timestamp: new Date().toISOString(),
     });
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({
+      success: true,
+      message: "تم إرسال طلبك بنجاح!",
+      note: "سيتم التواصل معك خلال 24 ساعة لتأكيد تفاصيل التأمين",
+    });
   } catch (error) {
-    console.error("Abandoned cart email API error:", error);
+    console.error("Error submitting quote:", error);
     return NextResponse.json(
-      { success: false, error: "Failed to send abandoned cart email" },
+      { success: false, error: "فشل في إرسال الطلب" },
       { status: 500 }
     );
   }

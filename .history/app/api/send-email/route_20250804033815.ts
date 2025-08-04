@@ -9,7 +9,7 @@ export async function POST(request: Request) {
 
     const data = await resend.emails.send({
       from: "Sky Insurance <noreply@resend.dev>",
-      to: ["website@sky.eg"],
+      to: ["omar.khaled@sky.eg"],
       subject: `New Contact Form Submission from ${firstName} ${lastName}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background-color: #f9f9f9;">
@@ -38,7 +38,7 @@ export async function POST(request: Request) {
           </table>
           <hr style="border-top: 1px solid #ddd; margin: 20px 0;">
           <p style="font-size: 14px; color: #888; text-align: center;">
-            Sky Insurance | <a href="mailto:website@sky.eg" style="color: #007bff; text-decoration: none;">website@sky.eg</a>
+            Sky Insurance | <a href="mailto:omar.khaled@sky.eg" style="color: #007bff; text-decoration: none;">omar.khaled@sky.eg</a>
           </p>
         </div>
       `,

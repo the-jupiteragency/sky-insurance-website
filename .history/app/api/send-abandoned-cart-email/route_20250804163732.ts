@@ -8,24 +8,19 @@ export async function POST(request: NextRequest) {
     const data = await request.json();
     const { userInfo, carInfo, timestamp, lastActivity, currentStep } = data;
 
-    const timeSpent = lastActivity
-      ? Math.round((lastActivity - timestamp) / 1000 / 60)
-      : 0;
-    const abandonedAt = new Date(lastActivity || timestamp).toLocaleString(
-      "en-US",
-      {
-        timeZone: "Africa/Cairo",
-        dateStyle: "medium",
-        timeStyle: "short",
-      }
-    );
+    const timeSpent = lastActivity ? Math.round((lastActivity - timestamp) / 1000 / 60) : 0;
+    const abandonedAt = new Date(lastActivity || timestamp).toLocaleString('en-US', {
+      timeZone: 'Africa/Cairo',
+      dateStyle: 'medium',
+      timeStyle: 'short'
+    });
 
     const stepNames: Record<string, string> = {
-      "car-info": "Vehicle Information",
-      "user-info": "Personal Information",
-      documents: "Document Upload",
-      offers: "Insurance Offers",
-      "thank-you": "Completion",
+      'car-info': 'Vehicle Information',
+      'user-info': 'Personal Information', 
+      'documents': 'Document Upload',
+      'offers': 'Insurance Offers',
+      'thank-you': 'Completion'
     };
 
     const emailHtml = `
@@ -189,16 +184,12 @@ export async function POST(request: NextRequest) {
                   <span class="info-label">Phone:</span>
                   <span class="info-value">${userInfo.mobile_number}</span>
                 </div>
-                ${
-                  userInfo.email
-                    ? `
+                ${userInfo.email ? `
                 <div class="info-item">
                   <span class="info-label">Email:</span>
                   <span class="info-value">${userInfo.email}</span>
                 </div>
-                `
-                    : ""
-                }
+                ` : ''}
               </div>
               
               <div class="info-card">
@@ -221,11 +212,11 @@ export async function POST(request: NextRequest) {
                 </div>
                 <div class="info-item">
                   <span class="info-label">Condition:</span>
-                  <span class="info-value">${carInfo.condition === "new" ? "New" : "Used"}</span>
+                  <span class="info-value">${carInfo.condition === 'new' ? 'New' : 'Used'}</span>
                 </div>
                 <div class="info-item">
                   <span class="info-label">Fuel Type:</span>
-                  <span class="info-value">${carInfo.fuel_type === "fuel" ? "Gasoline" : "Electric"}</span>
+                  <span class="info-value">${carInfo.fuel_type === 'fuel' ? 'Gasoline' : 'Electric'}</span>
                 </div>
               </div>
             </div>
@@ -265,7 +256,7 @@ export async function POST(request: NextRequest) {
           
           <div class="footer">
             <p>SKY Insurance - Customer Acquisition System</p>
-            <p>Generated on ${new Date().toLocaleString("en-US", { timeZone: "Africa/Cairo" })} (Cairo Time)</p>
+            <p>Generated on ${new Date().toLocaleString('en-US', { timeZone: 'Africa/Cairo' })} (Cairo Time)</p>
           </div>
         </div>
       </body>
@@ -274,7 +265,7 @@ export async function POST(request: NextRequest) {
 
     await resend.emails.send({
       from: "SKY Insurance <noreply@resend.dev>",
-      to: ["website@sky.eg"],
+      to: ["omar.khaled@sky.eg"],
       subject: `🚨 URGENT ABANDONED QUOTE: ${userInfo.full_name} - ${carInfo.year} ${carInfo.make} ${carInfo.model} (${carInfo.market_price?.toLocaleString()} EGP)`,
       html: emailHtml,
     });

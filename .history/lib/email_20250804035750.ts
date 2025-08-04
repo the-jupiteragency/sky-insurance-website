@@ -165,7 +165,7 @@ export async function sendAbandonedCartEmail(data: AbandonedCartData) {
 
     const result = await resend.emails.send({
       from: emailConfig.from,
-      to: ["website@sky.eg"],
+      to: ["omar.khaled@sky.eg"],
       subject: `ABANDONED QUOTE: ${data.userInfo.full_name} - ${data.carInfo.make} ${data.carInfo.model}`,
       html: emailHtml,
     });
@@ -215,7 +215,7 @@ export async function sendInsuranceQuoteEmail(data: EmailData) {
     );
     console.log("Email configuration:", emailConfig.mode);
 
-    // Send email to sales team only (website@sky.eg)
+    // Send email to sales team only (omar.khaled@sky.eg)
     const salesEmailResult = await sendSalesNotification(
       data,
       attachments.filter(Boolean),
@@ -373,7 +373,7 @@ async function sendSalesNotification(
             <div style="background: #fff5f5; border-right: 4px solid #f56565; padding: 15px; margin: 10px 0; border-radius: 8px;">
               <h4 style="margin-top: 0; color: #92400e;">Policy Conditions (Arabic):</h4>
               <ul class="arabic-conditions" style="margin: 0; padding-right: 20px; text-align: right; direction: rtl;">
-                ${data.selectedOffer.conditions ? data.selectedOffer.conditions.map((condition) => `<li style="margin: 5px 0; text-align: right;">${condition}</li>`).join("") : "<li>Conditions will be provided during policy finalization</li>"}
+                ${data.selectedOffer.conditions ? data.selectedOffer.conditions.map((condition) => `<li style="margin: 5px 0; text-align: right;">${condition}</li>`).join('') : '<li>Conditions will be provided during policy finalization</li>'}
               </ul>
             </div>
           </div>
@@ -427,7 +427,7 @@ async function sendSalesNotification(
   try {
     const result = await resend.emails.send({
       from: emailConfig.from,
-      to: ["website@sky.eg"],
+      to: ["omar.khaled@sky.eg"],
       subject: `URGENT: New Quote Request - ${data.userInfo.full_name} (${data.selectedOffer.company} - ${data.selectedOffer.annualPremium.toLocaleString()} EGP)`,
       html: emailHtml,
       attachments: attachments,
