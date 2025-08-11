@@ -78,9 +78,6 @@ export default function Component() {
               className={`${textColor} flex items-center gap-2 px-3 py-2`}
             >
               <Languages className="h-4 w-4" />
-              <span className="text-sm font-medium">
-                {language === "en" ? "AR" : "EN"}
-              </span>
             </Button>
           </div>
         </div>

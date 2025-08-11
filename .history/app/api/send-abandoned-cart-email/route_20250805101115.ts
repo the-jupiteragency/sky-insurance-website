@@ -34,33 +34,26 @@ export async function POST(request: NextRequest) {
       <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="color-scheme" content="light dark">
-        <meta name="supported-color-schemes" content="light dark">
         <title>🚨 URGENT: Abandoned Insurance Quote</title>
         <style>
-          :root {
-            color-scheme: light dark;
-          }
           body { 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            color: #1a1a1a; 
+            color: #333; 
             margin: 0; 
             padding: 0; 
-            background-color: #ffffff;
-            -webkit-text-size-adjust: 100%;
-            -ms-text-size-adjust: 100%;
+            background-color: #f5f5f5;
           }
           .container { 
             max-width: 700px; 
             margin: 20px auto; 
-            background: #ffffff;
-            border: 1px solid #e5e7eb;
+            background: white;
             border-radius: 12px;
             overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
           }
           .header { 
-            background: #dc2626; 
-            color: #ffffff; 
+            background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%); 
+            color: white; 
             padding: 30px 20px; 
             text-align: center;
           }
@@ -68,11 +61,10 @@ export async function POST(request: NextRequest) {
             margin: 0;
             font-size: 24px;
             font-weight: 700;
-            color: #ffffff;
           }
           .urgent-badge {
-            background: #f59e0b;
-            color: #ffffff;
+            background: #fbbf24;
+            color: #92400e;
             padding: 8px 16px;
             border-radius: 20px;
             font-size: 12px;
@@ -82,141 +74,93 @@ export async function POST(request: NextRequest) {
           }
           .content { 
             padding: 30px;
-            background: #ffffff;
-            color: #1a1a1a;
           }
           .alert-box {
-            background: #ffffff;
-            border: 2px solid #dc2626;
+            background: #fef2f2;
+            border-left: 4px solid #dc2626;
             padding: 20px;
             margin: 20px 0;
-            border-radius: 8px;
+            border-radius: 0 8px 8px 0;
           }
           .info-grid {
-            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
             margin: 25px 0;
           }
           .info-card { 
-            background: #ffffff; 
+            background: #f8fafc; 
             padding: 20px; 
-            border: 2px solid #e5e7eb;
             border-radius: 10px;
-            margin-bottom: 20px;
+            border: 1px solid #e2e8f0;
           }
           .info-card h3 {
             margin: 0 0 15px 0;
             color: #1e40af;
             font-size: 16px;
             font-weight: 600;
-            border-bottom: 2px solid #1e40af;
+            border-bottom: 2px solid #dbeafe;
             padding-bottom: 8px;
           }
           .info-item {
-            display: table;
-            width: 100%;
+            display: flex;
+            justify-content: space-between;
             margin: 8px 0;
             padding: 5px 0;
           }
           .info-label {
-            display: table-cell;
             font-weight: 600;
-            color: #374151;
-            width: 40%;
+            color: #4b5563;
           }
           .info-value {
-            display: table-cell;
-            color: #1a1a1a;
+            color: #111827;
             font-weight: 500;
-            text-align: right;
           }
           .progress-section {
-            background: #ffffff;
-            border: 2px solid #0ea5e9;
+            background: #f0f9ff;
+            border: 1px solid #0ea5e9;
             border-radius: 10px;
             padding: 20px;
             margin: 25px 0;
           }
+          .progress-bar {
+            background: #e0e7ff;
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 10px 0;
+          }
+          .progress-fill {
+            background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+            height: 100%;
+            transition: width 0.3s ease;
+          }
           .action-section {
-            background: #059669;
-            color: #ffffff;
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+            color: white;
             padding: 25px;
             border-radius: 10px;
             text-align: center;
             margin: 25px 0;
           }
           .contact-priority {
-            background: #ffffff;
+            background: #fef3c7;
             border: 2px solid #f59e0b;
             border-radius: 10px;
             padding: 20px;
             margin: 20px 0;
           }
           .footer {
-            background: #f8f9fa;
+            background: #f9fafb;
             padding: 20px;
             text-align: center;
             border-top: 1px solid #e5e7eb;
             color: #6b7280;
             font-size: 14px;
           }
-          
-          @media (prefers-color-scheme: dark) {
-            body {
-              background-color: #1a1a1a !important;
-              color: #ffffff !important;
-            }
-            .container {
-              background: #2d2d2d !important;
-              border-color: #404040 !important;
-            }
-            .content {
-              background: #2d2d2d !important;
-              color: #ffffff !important;
-            }
-            .info-card {
-              background: #2d2d2d !important;
-              border-color: #404040 !important;
-            }
-            .info-card h3 {
-              color: #60a5fa !important;
-              border-bottom-color: #60a5fa !important;
-            }
-            .info-label {
-              color: #d1d5db !important;
-            }
-            .info-value {
-              color: #ffffff !important;
-            }
-            .alert-box {
-              background: #2d2d2d !important;
-            }
-            .progress-section {
-              background: #2d2d2d !important;
-            }
-            .contact-priority {
-              background: #2d2d2d !important;
-            }
-            .footer {
-              background: #1a1a1a !important;
-              border-top-color: #404040 !important;
-            }
-          }
-          
           @media (max-width: 600px) {
             .info-grid {
-              display: block;
-            }
-            .info-item {
-              display: block;
-            }
-            .info-label, .info-value {
-              display: block;
-              width: 100%;
-              text-align: left;
-            }
-            .info-value {
-              margin-top: 5px;
-              font-weight: 700;
+              grid-template-columns: 1fr;
             }
           }
         </style>
@@ -224,7 +168,7 @@ export async function POST(request: NextRequest) {
       <body>
         <div class="container">
           <div class="header">
-            <h1>🚨 ABANDONED INSURANCE QUOTE</h1>
+            <h1 style="background: rgba(0,0,0,0.1); padding: 10px; border-radius: 5px;">🚨 ABANDONED INSURANCE QUOTE</h1>
             <div class="urgent-badge">HIGH PRIORITY - CONTACT IMMEDIATELY</div>
           </div>
           
@@ -307,7 +251,7 @@ export async function POST(request: NextRequest) {
               <p style="margin: 0; color: #92400e; font-weight: 500;">This customer showed high interest by providing personal details and vehicle information. <strong>Contact within 1 hour for best conversion rate.</strong></p>
             </div>
 
-            <div class="action-section">
+            <div class="action-section" style="background: rgba(0,0,0,0.1);>
               <h3 style="margin: 0 0 15px 0;">🎯 Recommended Actions</h3>
               <ul style="text-align: left; margin: 0; padding-left: 20px;">
                 <li>Call the customer immediately using the provided phone number</li>

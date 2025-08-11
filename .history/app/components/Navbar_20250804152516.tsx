@@ -79,7 +79,7 @@ export default function Component() {
             >
               <Languages className="h-4 w-4" />
               <span className="text-sm font-medium">
-                {language === "en" ? "AR" : "EN"}
+                {language === "en" ? "العربية" : "English"}
               </span>
             </Button>
           </div>

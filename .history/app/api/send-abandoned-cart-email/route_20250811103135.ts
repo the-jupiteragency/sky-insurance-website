@@ -330,7 +330,7 @@ export async function POST(request: NextRequest) {
 
     await resend.emails.send({
       from: "SKY Insurance <noreply@resend.dev>",
-      to: ["website@sky.eg"],
+      to: ["omar.khaled@sky.eg"],
       subject: `🚨 URGENT ABANDONED QUOTE: ${userInfo.full_name} - ${carInfo.year} ${carInfo.make} ${carInfo.model} (${carInfo.market_price?.toLocaleString()} EGP)`,
       html: emailHtml,
     });

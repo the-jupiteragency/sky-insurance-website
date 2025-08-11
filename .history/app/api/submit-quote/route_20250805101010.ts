@@ -15,33 +15,26 @@ export async function POST(request: NextRequest) {
       <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="color-scheme" content="light dark">
-        <meta name="supported-color-schemes" content="light dark">
         <title>✅ New Insurance Quote Submitted</title>
         <style>
-          :root {
-            color-scheme: light dark;
-          }
           body { 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            color: #1a1a1a; 
+            color: #333; 
             margin: 0; 
             padding: 0; 
-            background-color: #ffffff;
-            -webkit-text-size-adjust: 100%;
-            -ms-text-size-adjust: 100%;
+            background-color: #f5f5f5;
           }
           .container { 
             max-width: 700px; 
             margin: 20px auto; 
-            background: #ffffff;
-            border: 1px solid #e5e7eb;
+            background: white;
             border-radius: 12px;
             overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
           }
           .header { 
-            background: #10b981; 
-            color: #ffffff; 
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%); 
+            color: white; 
             padding: 30px 20px; 
             text-align: center;
           }
@@ -49,11 +42,10 @@ export async function POST(request: NextRequest) {
             margin: 0;
             font-size: 24px;
             font-weight: 700;
-            color: #ffffff;
           }
           .success-badge {
-            background: #059669;
-            color: #ffffff;
+            background: #34d399;
+            color: #065f46;
             padding: 8px 16px;
             border-radius: 20px;
             font-size: 12px;
@@ -63,56 +55,51 @@ export async function POST(request: NextRequest) {
           }
           .content { 
             padding: 30px;
-            background: #ffffff;
-            color: #1a1a1a;
           }
           .success-box {
-            background: #ffffff;
-            border: 2px solid #10b981;
+            background: #f0fdf4;
+            border-left: 4px solid #10b981;
             padding: 20px;
             margin: 20px 0;
-            border-radius: 8px;
+            border-radius: 0 8px 8px 0;
           }
           .info-grid {
-            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
             margin: 25px 0;
           }
           .info-card { 
-            background: #ffffff; 
+            background: #f8fafc; 
             padding: 20px; 
-            border: 2px solid #e5e7eb;
             border-radius: 10px;
-            margin-bottom: 20px;
+            border: 1px solid #e2e8f0;
           }
           .info-card h3 {
             margin: 0 0 15px 0;
             color: #1e40af;
             font-size: 16px;
             font-weight: 600;
-            border-bottom: 2px solid #1e40af;
+            border-bottom: 2px solid #dbeafe;
             padding-bottom: 8px;
           }
           .info-item {
-            display: table;
-            width: 100%;
+            display: flex;
+            justify-content: space-between;
             margin: 8px 0;
             padding: 5px 0;
           }
           .info-label {
-            display: table-cell;
             font-weight: 600;
-            color: #374151;
-            width: 40%;
+            color: #4b5563;
           }
           .info-value {
-            display: table-cell;
-            color: #1a1a1a;
+            color: #111827;
             font-weight: 500;
-            text-align: right;
           }
           .premium-section {
-            background: #10b981;
-            color: #ffffff;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
             padding: 25px;
             border-radius: 10px;
             text-align: center;
@@ -121,23 +108,21 @@ export async function POST(request: NextRequest) {
           .premium-section h2 {
             margin: 0 0 10px 0;
             font-size: 24px;
-            color: #ffffff;
           }
           .premium-section .amount {
             font-size: 28px;
             font-weight: bold;
             margin: 10px 0;
-            color: #ffffff;
           }
           .conditions-section {
-            background: #ffffff;
-            border: 2px solid #f59e0b;
+            background: #fef3c7;
+            border: 1px solid #f59e0b;
             border-radius: 10px;
             padding: 20px;
             margin: 20px 0;
           }
           .conditions-section h4 {
-            color: #d97706;
+            color: #92400e;
             margin: 0 0 15px 0;
           }
           .conditions-section ul {
@@ -148,81 +133,26 @@ export async function POST(request: NextRequest) {
           }
           .conditions-section li {
             margin: 8px 0;
-            color: #d97706;
+            color: #92400e;
           }
           .action-section {
-            background: #ffffff;
-            border: 2px solid #3b82f6;
+            background: #eff6ff;
+            border: 1px solid #3b82f6;
             border-radius: 10px;
             padding: 20px;
             margin: 25px 0;
           }
           .footer {
-            background: #f8f9fa;
+            background: #f9fafb;
             padding: 20px;
             text-align: center;
             border-top: 1px solid #e5e7eb;
             color: #6b7280;
             font-size: 14px;
           }
-          
-          @media (prefers-color-scheme: dark) {
-            body {
-              background-color: #1a1a1a !important;
-              color: #ffffff !important;
-            }
-            .container {
-              background: #2d2d2d !important;
-              border-color: #404040 !important;
-            }
-            .content {
-              background: #2d2d2d !important;
-              color: #ffffff !important;
-            }
-            .info-card {
-              background: #2d2d2d !important;
-              border-color: #404040 !important;
-            }
-            .info-card h3 {
-              color: #60a5fa !important;
-              border-bottom-color: #60a5fa !important;
-            }
-            .info-label {
-              color: #d1d5db !important;
-            }
-            .info-value {
-              color: #ffffff !important;
-            }
-            .success-box {
-              background: #2d2d2d !important;
-            }
-            .conditions-section {
-              background: #2d2d2d !important;
-            }
-            .action-section {
-              background: #2d2d2d !important;
-            }
-            .footer {
-              background: #1a1a1a !important;
-              border-top-color: #404040 !important;
-            }
-          }
-          
           @media (max-width: 600px) {
             .info-grid {
-              display: block;
-            }
-            .info-item {
-              display: block;
-            }
-            .info-label, .info-value {
-              display: block;
-              width: 100%;
-              text-align: left;
-            }
-            .info-value {
-              margin-top: 5px;
-              font-weight: 700;
+              grid-template-columns: 1fr;
             }
           }
         </style>
@@ -291,9 +221,9 @@ export async function POST(request: NextRequest) {
             </div>
 
             <div class="premium-section">
-              <h2>🏆 Selected Insurance Plan</h2>
-              <div style="font-size: 20px; margin: 10px 0;">${selectedOffer.company}</div>
-              <div style="font-size: 16px; opacity: 0.9; margin: 5px 0;">${selectedOffer.policyType}</div>
+              <h2 style="background: rgba(0,0,0,0.1); padding: 10px; border-radius: 5px;">🏆 Selected Insurance Plan</h2>
+              <div style="font-size: 20px; margin: 10px 0; background: rgba(0,0,0,0.1); padding: 8px; border-radius: 5px;">${selectedOffer.company}</div>
+              <div style="font-size: 16px; opacity: 0.9; margin: 5px 0; background: rgba(0,0,0,0.1); padding: 6px; border-radius: 5px;">${selectedOffer.policyType}</div>
               <div class="amount">${Math.round(selectedOffer.annualPremium).toLocaleString()} EGP</div>
               <div style="font-size: 14px; opacity: 0.9;">Annual Premium • Rate: ${(selectedOffer.premiumRate * 100).toFixed(2)}%</div>
             </div>
@@ -329,7 +259,7 @@ export async function POST(request: NextRequest) {
     try {
       await resend.emails.send({
         from: "SKY Insurance <noreply@resend.dev>",
-        to: ["website@sky.eg"],
+        to: ["omar.khaled@sky.eg"],
         subject: `✅ NEW QUOTE SUBMITTED: ${userInfo.full_name} - ${carInfo.year} ${carInfo.make} ${carInfo.model} (${Math.round(selectedOffer.annualPremium).toLocaleString()} EGP)`,
         html: emailHtml,
       });
