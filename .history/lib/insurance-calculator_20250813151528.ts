@@ -658,7 +658,7 @@ function calculateWethaqElectric(carInfo: CarInfo): InsuranceOffer[] {
   const electricConditions = [
     "اعفاء شرط الإصلاح في التوكيل",
     "تحمل 25% بطاريه",
-    "تحمل 10% لكل المطالبه",
+    "تحمل 10% فى حاله الهلاك الكلى",
     "بدون تحمل اجبارى",
   ];
 

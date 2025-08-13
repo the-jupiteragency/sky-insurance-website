@@ -41,7 +41,7 @@ const ELECTRIC_BRANDS_WITH_DEALERSHIP = [
 
 export function calculateInsuranceOffers(carInfo: CarInfo): InsuranceOffer[] {
   const offers: InsuranceOffer[] = [];
-  const currentYear = new Date().getFullYear();
+  const currentYear = 2025;
   const carAge = currentYear - carInfo.year;
 
   // Calculate offers for each company
@@ -656,9 +656,9 @@ function calculateWethaqElectric(carInfo: CarInfo): InsuranceOffer[] {
       : ELECTRIC_BRANDS_WITH_DEALERSHIP.includes(make.toUpperCase());
 
   const electricConditions = [
-    "اعفاء شرط الإصلاح في التوكيل",
+    "تطبيق تحمل 10% شرط الإصلاح في التوكيل",
     "تحمل 25% بطاريه",
-    "تحمل 10% لكل المطالبه",
+    "تحمل 10% فى حاله الهلاك الكلى",
     "بدون تحمل اجبارى",
   ];
 
@@ -690,7 +690,7 @@ function calculateWethaqElectric(carInfo: CarInfo): InsuranceOffer[] {
 function calculateGIGOffers(carInfo: CarInfo): InsuranceOffer[] {
   const { make, market_price, fuel_type, year } = carInfo;
   const offers: InsuranceOffer[] = [];
-  const currentYear = new Date().getFullYear();
+  const currentYear = 2026;
   const carAge = currentYear - year;
 
   // GIG only covers gasoline cars
@@ -769,8 +769,8 @@ function calculateGIGOffers(carInfo: CarInfo): InsuranceOffer[] {
     );
   }
 
-  // Gold Policy (only for cars >= 501,000 and car age 0-5 years)
-  if (market_price >= 501000 && carAge <= 5) {
+  // Gold Policy (only for cars >= 501,000 and car age 1-5 years)
+  if (market_price >= 501000 && carAge >= 1 && carAge <= 5) {
     const goldConditions = [
       "محضر شرطه : للحوادث أكبر من 10% من مبلغ التامين",
       "تغطيه الحوادث الشخصيه 75 الف للفرد لعدد 4 افراد متضمنه السائق",
