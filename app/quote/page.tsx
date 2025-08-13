@@ -70,6 +70,7 @@ export default function QuotePage() {
   } = useQuoteState();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isNavigating, setIsNavigating] = useState(false);
   const [showCustomMake, setShowCustomMake] = useState(false);
   const [showCustomModel, setShowCustomModel] = useState(false);
   const [customMake, setCustomMake] = useState("");
@@ -310,45 +311,51 @@ export default function QuotePage() {
     setCurrentStep(targetStep);
   };
 
-  const handleNext = () => {
-    if (state.currentStep === "car-info") {
-      if (validateCarInfo()) {
-        setCurrentStep("user-info");
-      }
-    } else if (state.currentStep === "user-info") {
-      if (validateUserInfo()) {
-        // Check if partial value insurance is selected
-        if (state.carInfo.insurance_type === "partial_value") {
-          // Skip documents and offers, go directly to thank you
-          handlePartialValueSubmit();
+  const handleNext = async () => {
+    setIsNavigating(true);
+    
+    try {
+      if (state.currentStep === "car-info") {
+        if (validateCarInfo()) {
+          setCurrentStep("user-info");
+        }
+      } else if (state.currentStep === "user-info") {
+        if (validateUserInfo()) {
+          // Check if partial value insurance is selected
+          if (state.carInfo.insurance_type === "partial_value") {
+            // Skip documents and offers, go directly to thank you
+            await handlePartialValueSubmit();
+            return;
+          }
+          setCurrentStep("documents");
+        }
+      } else if (state.currentStep === "documents") {
+        if (validateDocuments()) {
+          // Only calculate offers for full value insurance
+          if (state.carInfo.insurance_type === "full_value") {
+            const calculatedOffers = calculateInsuranceOffers(
+              state.carInfo as CarInfo
+            );
+            updateState({ offers: calculatedOffers });
+            setCurrentStep("offers");
+          }
+        }
+      } else if (state.currentStep === "offers") {
+        if (state.selectedOffer) {
+          // This is now the final step before submission
           return;
-        }
-        setCurrentStep("documents");
-      }
-    } else if (state.currentStep === "documents") {
-      if (validateDocuments()) {
-        // Only calculate offers for full value insurance
-        if (state.carInfo.insurance_type === "full_value") {
-          const calculatedOffers = calculateInsuranceOffers(
-            state.carInfo as CarInfo
-          );
-          updateState({ offers: calculatedOffers });
-          setCurrentStep("offers");
+        } else {
+          toast({
+            title: isRTL ? "يرجى اختيار عرض" : "Please select an offer",
+            description: isRTL
+              ? "يجب اختيار عرض تأمين للمتابعة."
+              : "You must choose an insurance offer to continue.",
+            variant: "destructive",
+          });
         }
       }
-    } else if (state.currentStep === "offers") {
-      if (state.selectedOffer) {
-        // This is now the final step before submission
-        return;
-      } else {
-        toast({
-          title: isRTL ? "يرجى اختيار عرض" : "Please select an offer",
-          description: isRTL
-            ? "يجب اختيار عرض تأمين للمتابعة."
-            : "You must choose an insurance offer to continue.",
-          variant: "destructive",
-        });
-      }
+    } finally {
+      setIsNavigating(false);
     }
   };
 
@@ -1610,13 +1617,20 @@ export default function QuotePage() {
             ) : (
               <Button
                 onClick={handleNext}
+                disabled={isNavigating}
                 className={cn(
                   "flex items-center gap-2 px-6 py-3",
                   isRTL && "flex-row-reverse"
                 )}
                 size="lg"
               >
-                {isRTL ? "التالي" : "Next"}
+                {isNavigating
+                  ? isRTL
+                    ? "جاري التحميل..."
+                    : "Loading..."
+                  : isRTL
+                    ? "التالي"
+                    : "Next"}
                 <ArrowRight className={cn("h-4 w-4", isRTL)} />
               </Button>
             )}
