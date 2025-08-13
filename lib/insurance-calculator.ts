@@ -769,8 +769,8 @@ function calculateGIGOffers(carInfo: CarInfo): InsuranceOffer[] {
     );
   }
 
-  // Gold Policy (only for cars >= 501,000 and car age 0-5 years)
-  if (market_price >= 501000 && carAge <= 5) {
+  // Gold Policy (only for cars >= 501,000 and car age 0-4 years)
+  if (market_price >= 501000 && carAge <= 4) {
     const goldConditions = [
       "محضر شرطه : للحوادث أكبر من 10% من مبلغ التامين",
       "تغطيه الحوادث الشخصيه 75 الف للفرد لعدد 4 افراد متضمنه السائق",
