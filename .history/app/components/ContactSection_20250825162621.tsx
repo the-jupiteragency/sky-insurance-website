@@ -291,7 +291,7 @@ export default function ContactSection() {
             </div>
           </div>
           <div className="mt-8 pt-6">
-            <div className="text-center text-xs text-blue-100 space-y-3 mb-4 max-w-4xl mx-auto">
+            <div className="text-center text-sm text-blue-100 space-y-3 mb-4 max-w-4xl mx-auto">
               <p className="leading-relaxed">
                 {content[language as keyof typeof content].regulatory.complaint}{" "}
                 <a
