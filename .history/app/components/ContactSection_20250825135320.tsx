@@ -291,7 +291,7 @@ export default function ContactSection() {
             </div>
           </div>
           <div className="mt-8 pt-6">
-            <div className="text-center text-lg text-blue-100 space-y-3 mb-4 max-w-4xl mx-auto">
+            <div className="text-center text-base text-blue-100 space-y-3 mb-4 max-w-4xl mx-auto">
               <p className="leading-relaxed">
                 {content[language as keyof typeof content].regulatory.complaint}{" "}
                 <a
@@ -305,7 +305,7 @@ export default function ContactSection() {
                   {content[language as keyof typeof content].regulatory.website}
                 </a>
               </p>
-              <p className="text-base opacity-90">
+              <p className="text-xs opacity-90">
                 {content[language as keyof typeof content].regulatory.license}
               </p>
             </div>

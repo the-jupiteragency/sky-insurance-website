@@ -305,7 +305,7 @@ export default function ContactSection() {
                   {content[language as keyof typeof content].regulatory.website}
                 </a>
               </p>
-              <p className="text-base opacity-90">
+              <p className="text-xs opacity-90">
                 {content[language as keyof typeof content].regulatory.license}
               </p>
             </div>

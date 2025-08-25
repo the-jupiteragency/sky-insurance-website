@@ -290,8 +290,8 @@ export default function ContactSection() {
               </a>
             </div>
           </div>
-          <div className="mt-8 pt-6">
-            <div className="text-center text-lg text-blue-100 space-y-3 mb-4 max-w-4xl mx-auto">
+          <div className="mt-8  pt-6">
+            <div className="text-center text-sm text-blue-100 space-y-3 mb-4 max-w-4xl mx-auto">
               <p className="leading-relaxed">
                 {content[language as keyof typeof content].regulatory.complaint}{" "}
                 <a
@@ -305,11 +305,11 @@ export default function ContactSection() {
                   {content[language as keyof typeof content].regulatory.website}
                 </a>
               </p>
-              <p className="text-base opacity-90">
+              <p className="text-xs opacity-90">
                 {content[language as keyof typeof content].regulatory.license}
               </p>
             </div>
-            <div className="text-center border-t border-blue-700 mt-8  pt-6">
+            <div className="text-center border-t border-blue-700">
               <p>
                 &copy; {new Date().getFullYear()} Sky Insurance. All rights
                 reserved.
