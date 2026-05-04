@@ -85,12 +85,12 @@ export default function StorySection() {
               alt="Our Story"
               width={700}
               height={700}
-              className="rounded-lg shadow-xl"
+              className="rounded-lg shadow-xl w-full h-auto"
               loading="lazy"
             />
           </motion.div>
           <motion.div variants={fadeIn} className="space-y-6">
-            <h2 className="text-6xl font-light text-blue-800">
+            <h2 className="text-4xl md:text-6xl font-light text-blue-800">
               {content[language as keyof typeof content].title}
             </h2>
             {content[language as keyof typeof content].description.map(
@@ -98,7 +98,7 @@ export default function StorySection() {
                 <p key={index} className="text-gray-800 text-2xl">
                   {description}
                 </p>
-              )
+              ),
             )}
             <Image
               src="/light star.png"
@@ -111,7 +111,7 @@ export default function StorySection() {
         </div>
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <motion.div variants={fadeIn} className="space-y-6 md:order-1">
-            <h2 className="text-6xl font-light text-blue-800">
+            <h2 className="text-4xl md:text-6xl font-light text-blue-800">
               {content[language as keyof typeof content].mission.title}
             </h2>
             {content[language as keyof typeof content].mission.description.map(
@@ -119,7 +119,7 @@ export default function StorySection() {
                 <p key={index} className="text-gray-800 text-2xl">
                   {description}
                 </p>
-              )
+              ),
             )}
             <Image
               src="/dark star.png"
@@ -135,7 +135,7 @@ export default function StorySection() {
               alt="Our Mission"
               width={700}
               height={700}
-              className="rounded-lg shadow-xl"
+              className="rounded-lg shadow-xl w-full h-auto"
             />
           </motion.div>
         </div>
@@ -146,11 +146,11 @@ export default function StorySection() {
               alt="Our Vision"
               width={700}
               height={700}
-              className="rounded-lg shadow-xl"
+              className="rounded-lg shadow-xl w-full h-auto"
             />
           </motion.div>
           <motion.div variants={fadeIn} className="space-y-6">
-            <h2 className="text-6xl font-light text-blue-800">
+            <h2 className="text-4xl md:text-6xl font-light text-blue-800">
               {content[language as keyof typeof content].vision.title}
             </h2>
             {content[language as keyof typeof content].vision.description.map(
@@ -158,7 +158,7 @@ export default function StorySection() {
                 <p key={index} className="text-gray-800 text-2xl">
                   {description}
                 </p>
-              )
+              ),
             )}
             <Image
               src="/light star.png"

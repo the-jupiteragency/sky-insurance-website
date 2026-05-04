@@ -104,7 +104,7 @@ export default function ValuesSection() {
     >
       <div className="container mx-auto px-4">
         <motion.div variants={fadeIn} className="text-center mb-16">
-          <h2 className="text-5xl font-light text-blue-800 mb-4">
+          <h2 className="text-3xl md:text-5xl font-light text-blue-800 mb-4">
             {content[language as keyof typeof content].title}
           </h2>
           <p className="text-gray-800 text-xl max-w-xl mx-auto">

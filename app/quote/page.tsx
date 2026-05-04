@@ -123,7 +123,7 @@ export default function QuotePage() {
     ];
 
   const currentStepIndex = steps.findIndex(
-    (step) => step.key === state.currentStep
+    (step) => step.key === state.currentStep,
   );
   const progress = ((currentStepIndex + 1) / steps.length) * 100;
 
@@ -153,7 +153,11 @@ export default function QuotePage() {
       state.userInfo.full_name && state.userInfo.mobile_number;
 
     if (hasCarInfo && hasUserInfo && state.currentStep !== "thank-you") {
-      saveAbandonedCart(state.userInfo as UserInfo, state.carInfo as CarInfo, state.currentStep);
+      saveAbandonedCart(
+        state.userInfo as UserInfo,
+        state.carInfo as CarInfo,
+        state.currentStep,
+      );
     }
   }, [state.carInfo, state.userInfo, state.currentStep, saveAbandonedCart]);
 
@@ -163,54 +167,78 @@ export default function QuotePage() {
   }, [state.currentStep, resetTimer]);
 
   // Restore abandoned cart data on page load
-  useEffect(() => {
-    const abandonedData = getAbandonedCart();
-    if (abandonedData && !state.userInfo.full_name && !state.carInfo.make) {
-      updateCarInfo(abandonedData.carInfo as Partial<CarInfo>);
-      updateUserInfo(abandonedData.userInfo as Partial<UserInfo>);
-      toast({
-        title: isRTL ? "تم استعادة البيانات" : "Data Restored",
-        description: isRTL
-          ? "تم استعادة بياناتك السابقة"
-          : "Your previous data has been restored",
-      });
-    }
-  }, [
-    getAbandonedCart,
-    updateCarInfo,
-    updateUserInfo,
-    state.userInfo.full_name,
-    state.carInfo.make,
-    toast,
-    isRTL,
-  ]);
+  // useEffect(() => {
+  //   const abandonedData = getAbandonedCart();
+  //   if (abandonedData && !state.userInfo.full_name && !state.carInfo.make) {
+  //     updateCarInfo(abandonedData.carInfo as Partial<CarInfo>);
+  //     updateUserInfo(abandonedData.userInfo as Partial<UserInfo>);
+  //     toast({
+  //       title: isRTL ? "تم استعادة البيانات" : "Data Restored",
+  //       description: isRTL
+  //         ? "تم استعادة بياناتك السابقة"
+  //         : "Your previous data has been restored",
+  //     });
+  //   }
+  // }, [
+  //   getAbandonedCart,
+  //   updateCarInfo,
+  //   updateUserInfo,
+  //   state.userInfo.full_name,
+  //   state.carInfo.make,
+  //   toast,
+  //   isRTL,
+  // ]);
 
   const validateCarInfo = () => {
-    try {
-      carInfoSchema.parse(state.carInfo);
+    const result = carInfoSchema.safeParse(state.carInfo);
+    if (result.success) {
       setErrors({});
       return true;
-    } catch (error: any) {
+    } else {
       const fieldErrors: Record<string, string> = {};
-      error.errors?.forEach((err: any) => {
-        fieldErrors[err.path[0]] = err.message;
+      result.error.issues.forEach((err) => {
+        if (err.path[0]) {
+          fieldErrors[err.path[0].toString()] = err.message;
+        }
       });
       setErrors(fieldErrors);
+
+      // Scroll to the first error
+      const firstErrorField = result.error.issues[0]?.path[0]?.toString();
+      if (firstErrorField) {
+        const element = document.getElementById(`field-${firstErrorField}`);
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+      }
+
       return false;
     }
   };
 
   const validateUserInfo = () => {
-    try {
-      userInfoSchema.parse(state.userInfo);
+    const result = userInfoSchema.safeParse(state.userInfo);
+    if (result.success) {
       setErrors({});
       return true;
-    } catch (error: any) {
+    } else {
       const fieldErrors: Record<string, string> = {};
-      error.errors?.forEach((err: any) => {
-        fieldErrors[err.path[0]] = err.message;
+      result.error.issues.forEach((err) => {
+        if (err.path[0]) {
+          fieldErrors[err.path[0].toString()] = err.message;
+        }
       });
       setErrors(fieldErrors);
+
+      // Scroll to the first error
+      const firstErrorField = result.error.issues[0]?.path[0]?.toString();
+      if (firstErrorField) {
+        const element = document.getElementById(`field-${firstErrorField}`);
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+      }
+
       return false;
     }
   };
@@ -313,7 +341,7 @@ export default function QuotePage() {
 
   const handleNext = async () => {
     setIsNavigating(true);
-    
+
     try {
       if (state.currentStep === "car-info") {
         if (validateCarInfo()) {
@@ -334,7 +362,7 @@ export default function QuotePage() {
           // Only calculate offers for full value insurance
           if (state.carInfo.insurance_type === "full_value") {
             const calculatedOffers = calculateInsuranceOffers(
-              state.carInfo as CarInfo
+              state.carInfo as CarInfo,
             );
             updateState({ offers: calculatedOffers });
             setCurrentStep("offers");
@@ -511,7 +539,7 @@ export default function QuotePage() {
           <CardTitle
             className={cn(
               "flex items-center gap-3",
-              isRTL && "flex-row-reverse"
+              isRTL && "flex-row-reverse",
             )}
           >
             {isRTL ? "معلومات السيارة" : "Car Information"}
@@ -524,7 +552,7 @@ export default function QuotePage() {
         </CardHeader>
         <CardContent className="p-8 space-y-8">
           {/* Car Condition */}
-          <div className="space-y-4">
+          <div className="space-y-4" id="field-condition">
             <Label
               className={cn("text-base font-semibold", isRTL && "text-right")}
             >
@@ -563,7 +591,7 @@ export default function QuotePage() {
           </div>
 
           {/* Fuel Type */}
-          <div className="space-y-4">
+          <div className="space-y-4" id="field-fuel_type">
             <Label
               className={cn("text-base font-semibold", isRTL && "text-right")}
             >
@@ -619,7 +647,7 @@ export default function QuotePage() {
 
           {/* Electric Vehicle Dealership Support */}
           {state.carInfo.fuel_type === "electric" && (
-            <div className="space-y-4">
+            <div className="space-y-4" id="field-has_official_dealership">
               <Label
                 className={cn("text-base font-semibold", isRTL && "text-right")}
               >
@@ -678,11 +706,11 @@ export default function QuotePage() {
           )}
 
           {/* Car Make Selection with New Autocomplete */}
-          <div className="space-y-4">
+          <div className="space-y-4" id="field-make">
             <Label
               className={cn(
                 "text-base font-semibold",
-                isRTL ? "text-right block w-full" : ""
+                isRTL ? "text-right block w-full" : "",
               )}
               style={isRTL ? { direction: "rtl" } : {}}
             >
@@ -719,7 +747,7 @@ export default function QuotePage() {
                 placeholder={isRTL ? "أدخل اسم الماركة" : "Enter brand name"}
                 className={cn(
                   "h-12 text-base",
-                  isRTL && "text-right rtl w-full"
+                  isRTL && "text-right rtl w-full",
                 )}
                 dir={isRTL ? "rtl" : "ltr"}
                 style={isRTL ? { direction: "rtl" } : {}}
@@ -729,7 +757,7 @@ export default function QuotePage() {
               <p
                 className={cn(
                   "text-sm text-red-500",
-                  isRTL && "text-right rtl"
+                  isRTL && "text-right rtl",
                 )}
               >
                 {state.errors.make}
@@ -738,11 +766,11 @@ export default function QuotePage() {
           </div>
 
           {/* Car Model Selection */}
-          <div className="space-y-4">
+          <div className="space-y-4" id="field-model">
             <Label
               className={cn(
                 "text-base font-semibold",
-                isRTL ? "text-right block w-full" : ""
+                isRTL ? "text-right block w-full" : "",
               )}
               style={isRTL ? { direction: "rtl" } : {}}
             >
@@ -765,7 +793,7 @@ export default function QuotePage() {
               <SelectTrigger
                 className={cn(
                   "h-12 text-base",
-                  isRTL && "text-right rtl w-full"
+                  isRTL && "text-right rtl w-full",
                 )}
                 style={isRTL ? { direction: "rtl" } : {}}
               >
@@ -797,7 +825,7 @@ export default function QuotePage() {
                     <div
                       className={cn(
                         "flex items-center gap-3",
-                        isRTL && "flex-row-reverse"
+                        isRTL && "flex-row-reverse",
                       )}
                       style={isRTL ? { direction: "rtl" } : {}}
                     >
@@ -824,7 +852,7 @@ export default function QuotePage() {
                     <div
                       className={cn(
                         "flex items-center gap-3",
-                        isRTL && "flex-row-reverse"
+                        isRTL && "flex-row-reverse",
                       )}
                       style={isRTL ? { direction: "rtl" } : {}}
                     >
@@ -855,7 +883,7 @@ export default function QuotePage() {
                 placeholder={isRTL ? "أدخل اسم الموديل" : "Enter model name"}
                 className={cn(
                   "h-12 text-base",
-                  isRTL && "text-right rtl w-full"
+                  isRTL && "text-right rtl w-full",
                 )}
                 dir={isRTL ? "rtl" : "ltr"}
                 style={isRTL ? { direction: "rtl" } : {}}
@@ -865,7 +893,7 @@ export default function QuotePage() {
               <p
                 className={cn(
                   "text-sm text-red-500",
-                  isRTL && "text-right rtl"
+                  isRTL && "text-right rtl",
                 )}
               >
                 {state.errors.model}
@@ -875,7 +903,7 @@ export default function QuotePage() {
 
           <div className="grid md:grid-cols-2 gap-6">
             {/* Manufacturing Year */}
-            <div className="space-y-4">
+            <div className="space-y-4" id="field-year">
               <Label
                 className={cn("text-base font-semibold", isRTL && "text-right")}
               >
@@ -898,7 +926,7 @@ export default function QuotePage() {
                       <div
                         className={cn(
                           "flex items-center gap-2",
-                          isRTL && "flex-row-reverse"
+                          isRTL && "flex-row-reverse",
                         )}
                       >
                         <span>{year}</span>
@@ -918,7 +946,7 @@ export default function QuotePage() {
             </div>
 
             {/* Market Price */}
-            <div className="space-y-4">
+            <div className="space-y-4" id="field-market_price">
               <Label
                 className={cn("text-base font-semibold", isRTL && "text-right")}
               >
@@ -932,7 +960,7 @@ export default function QuotePage() {
                   max={10000000}
                   className={cn(
                     "h-12 text-base",
-                    isRTL ? "pr-12 text-right" : "pl-12"
+                    isRTL ? "pr-12 text-right" : "pl-12",
                   )}
                   placeholder={isRTL ? "أدخل سعر السيارة" : "Enter car price"}
                   dir={isRTL ? "rtl" : "ltr"}
@@ -940,7 +968,7 @@ export default function QuotePage() {
                 <div
                   className={cn(
                     "absolute top-1/2 transform -translate-y-1/2 text-muted-foreground",
-                    isRTL ? "right-3" : "left-3"
+                    isRTL ? "right-3" : "left-3",
                   )}
                 >
                   EGP
@@ -956,7 +984,7 @@ export default function QuotePage() {
           </div>
 
           {/* Insurance Type */}
-          <div className="space-y-4">
+          <div className="space-y-4" id="field-insurance_type">
             <Label
               className={cn("text-base font-semibold", isRTL && "text-right")}
             >
@@ -1037,7 +1065,7 @@ export default function QuotePage() {
         </CardDescription>
       </CardHeader>
       <CardContent className="p-8 space-y-6">
-        <div className="space-y-4">
+        <div className="space-y-4" id="field-full_name">
           <Label
             className={cn("text-base font-semibold", isRTL && "text-right")}
           >
@@ -1057,7 +1085,7 @@ export default function QuotePage() {
           )}
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-4" id="field-mobile_number">
           <Label
             className={cn("text-base font-semibold", isRTL && "text-right")}
           >
@@ -1073,7 +1101,7 @@ export default function QuotePage() {
           <p
             className={cn(
               "text-xs text-muted-foreground",
-              isRTL && "text-right"
+              isRTL && "text-right",
             )}
           >
             {isRTL
@@ -1085,7 +1113,7 @@ export default function QuotePage() {
           )}
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-4" id="field-email">
           <Label
             className={cn("text-base font-semibold", isRTL && "text-right")}
           >
@@ -1102,7 +1130,7 @@ export default function QuotePage() {
           <p
             className={cn(
               "text-xs text-muted-foreground",
-              isRTL && "text-right"
+              isRTL && "text-right",
             )}
           >
             {isRTL
@@ -1201,7 +1229,7 @@ export default function QuotePage() {
           <h4
             className={cn(
               "font-semibold text-blue-900 mb-3",
-              isRTL && "text-right"
+              isRTL && "text-right",
             )}
           >
             {isRTL
@@ -1211,7 +1239,7 @@ export default function QuotePage() {
           <ul
             className={cn(
               "text-sm text-blue-800 space-y-2",
-              isRTL && "text-right"
+              isRTL && "text-right",
             )}
           >
             <li>
@@ -1286,7 +1314,7 @@ export default function QuotePage() {
 
           // Sort all offers by price (low to high)
           const sortedOffers = [...state.offers].sort(
-            (a, b) => a.annualPremium - b.annualPremium
+            (a, b) => a.annualPremium - b.annualPremium,
           );
 
           return (
@@ -1359,7 +1387,7 @@ export default function QuotePage() {
             <ul
               className={cn(
                 "text-sm space-y-2",
-                isRTL ? "text-right" : "text-left"
+                isRTL ? "text-right" : "text-left",
               )}
             >
               <li className="flex items-center gap-2">
@@ -1473,7 +1501,7 @@ export default function QuotePage() {
           <div
             className={cn(
               "flex items-center justify-between mb-4",
-              isRTL && "flex-row-reverse"
+              isRTL && "flex-row-reverse",
             )}
           >
             <span className="text-sm font-medium">
@@ -1491,7 +1519,7 @@ export default function QuotePage() {
           <div
             className={cn(
               "flex justify-between overflow-x-auto py-8",
-              isRTL && "flex-row-reverse"
+              isRTL && "flex-row-reverse",
             )}
           >
             {steps.map((step, index) => {
@@ -1578,7 +1606,7 @@ export default function QuotePage() {
           <div
             className={cn(
               "flex justify-between items-center",
-              isRTL && "flex-row-reverse"
+              isRTL && "flex-row-reverse",
             )}
           >
             <Button
@@ -1587,7 +1615,7 @@ export default function QuotePage() {
               disabled={state.currentStep === "car-info"}
               className={cn(
                 "flex items-center gap-2 px-6 py-3",
-                isRTL && "flex-row-reverse"
+                isRTL && "flex-row-reverse",
               )}
               size="lg"
             >
@@ -1601,7 +1629,7 @@ export default function QuotePage() {
                 disabled={!state.selectedOffer || isSubmitting}
                 className={cn(
                   "flex items-center gap-2 px-8 py-3",
-                  isRTL && "flex-row-reverse"
+                  isRTL && "flex-row-reverse",
                 )}
                 size="lg"
               >
@@ -1620,7 +1648,7 @@ export default function QuotePage() {
                 disabled={isNavigating}
                 className={cn(
                   "flex items-center gap-2 px-6 py-3",
-                  isRTL && "flex-row-reverse"
+                  isRTL && "flex-row-reverse",
                 )}
                 size="lg"
               >
