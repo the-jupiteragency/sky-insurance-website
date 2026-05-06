@@ -603,8 +603,6 @@ export default function QuotePage() {
                 onSelect={() =>
                   updateCarInfo({
                     fuel_type: "fuel" as const,
-                    make: "",
-                    model: "",
                     has_official_dealership: undefined,
                   })
                 }
@@ -624,8 +622,6 @@ export default function QuotePage() {
                 onSelect={() =>
                   updateCarInfo({
                     fuel_type: "electric" as const,
-                    make: "",
-                    model: "",
                   })
                 }
                 icon={
