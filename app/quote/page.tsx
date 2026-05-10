@@ -1285,10 +1285,7 @@ export default function QuotePage() {
                   : "Choose the best insurance plan for your needs"}
               </CardDescription>
             </div>
-            <LanguageSwitcher
-              language={state.language}
-              onLanguageChange={(lang) => updateState({ language: lang })}
-            />
+            <LanguageSwitcher />
           </div>
         </CardHeader>
       </Card> */}

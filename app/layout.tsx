@@ -11,8 +11,9 @@ const cairo = Cairo({
 });
 
 export const metadata: Metadata = {
-  title: "Sky Insurance",
-  description: "Preserving Prosperity, Providing Peace of Mind",
+  title: "Sky Insurance | سكاي للوساطة التأمينية",
+  description:
+    "Preserving Prosperity, Providing Peace of Mind | نحمي أصولك ونوفر حلول إدارة المخاطر",
 };
 
 export default function RootLayout({
@@ -21,7 +22,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="ar" dir="rtl">
       <body className={`${cairo.className} antialiased`}>
         <LanguageProvider>
           <Navbar />

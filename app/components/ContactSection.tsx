@@ -93,7 +93,7 @@ export default function ContactSection() {
 
     const validationResult = ContactFormSchema.safeParse(formData);
     if (!validationResult.success) {
-      validationResult.error.errors.forEach((error) =>
+      validationResult.error.issues.forEach((error) =>
         toast.error(error.message),
       );
       setIsSubmitting(false);
